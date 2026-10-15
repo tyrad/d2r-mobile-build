@@ -1,0 +1,28 @@
+name: Build macOS
+run-name: macOS source build · ${{ inputs.source_ref || 'v1.0.16' }}
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/build-macos.yml
+  workflow_dispatch:
+    inputs:
+      prepared_input:
+        description: macOS prepared package JSON
+        type: string
+        required: false
+        default: '{"url":"https://ipfs.filebase.io/ipfs/QmeM63VQnVGP2HMmiYCL39UHFJcnGBb4qqXqdaPvAY1U4b?filename=D2RMobile-MacPrepared.zip","sha256":"d961071ea06bffb12be37f4e79b2933186e59d2f1ead884e74b2ec9471b7a67f"}'
+      source_ref:
+        description: Upstream release, branch or commit
+        type: string
+        default: v1.0.16
+permissions:
+  contents: write
+  actions: write
+jobs:
+  build:
+    uses: jiayx/d2r-mobile-build/.github/workflows/pack-macos.yml@21315c23be4f761d5d61647b2e923cea143176d2
+    with:
+      prepared_input: ${{ inputs.prepared_input || '{"url":"https://ipfs.filebase.io/ipfs/QmeM63VQnVGP2HMmiYCL39UHFJcnGBb4qqXqdaPvAY1U4b?filename=D2RMobile-MacPrepared.zip","sha256":"d961071ea06bffb12be37f4e79b2933186e59d2f1ead884e74b2ec9471b7a67f"}' }}
+      source_repository: jhaizhou-ops/d2r-mobile
+      source_ref: ${{ inputs.source_ref || 'v1.0.16' }}
