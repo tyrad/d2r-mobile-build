@@ -21,7 +21,7 @@ permissions:
   actions: write
 jobs:
   build:
-    uses: jiayx/d2r-mobile-build/.github/workflows/pack-macos.yml@21315c23be4f761d5d61647b2e923cea143176d2
+    uses: ./.github/workflows/pack-macos-checked.yml
     with:
       prepared_input: ${{ inputs.prepared_input || '{"url":"https://ipfs.filebase.io/ipns/k51qzi5uqu5dkbfnqcjbd6jlgbckojtl4gu7m1kgu8esex1zg4oo485o5cjop2/D2RMobile-MacPrepared.zip","sha256_url":"https://ipfs.filebase.io/ipns/k51qzi5uqu5dkbfnqcjbd6jlgbckojtl4gu7m1kgu8esex1zg4oo485o5cjop2/MacPrepared-SHA256SUMS.txt"}' }}
       source_repository: jhaizhou-ops/d2r-mobile
