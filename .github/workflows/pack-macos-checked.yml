@@ -126,6 +126,28 @@ jobs:
           TOOLS_COMMIT: ${{ steps.tools.outputs.tools_commit }}
           MACOS_PREPARED_CACHE_HIT: ${{ steps.archive.outputs.cache-hit }}
         run: python scripts/macos.py build
+      - name: Verify runtime reflection files in both packaged apps
+        run: |
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'repair-tools/macos')
+          from repair_reflections import verify
+          apps = list(Path('outputs/macos-apps').glob('*.app'))
+          assert len(apps) == 2, 'Expected both Mac variants'
+          counts = {}
+          for app in apps:
+              directories = list((app / 'Contents/Resources/msl').glob('b-*'))
+              assert len(directories) == 1
+              directory = directories[0]
+              counts[app.name] = verify(directory, directory.name[2:])
+          path = Path('outputs/macos-build-report.json')
+          report = json.loads(path.read_text())
+          report['shader_reflection_validation'] = counts
+          report['reflection_recovery'] = json.loads(Path('.macos-prepared/manifest.json').read_text()).get('reflection_recovery')
+          path.write_text(json.dumps(report, indent=2) + '\n')
+          print('Runtime reflection completeness:', counts)
+          PY
       - name: Check interface cache space
         id: interface-budget
         if: inputs.publish && steps.interface.outputs.cache-hit != 'true'
